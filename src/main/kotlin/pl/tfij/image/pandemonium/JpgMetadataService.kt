@@ -11,9 +11,7 @@ import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoAscii
 import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoXpString
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet
-import java.io.BufferedOutputStream
-import java.io.File
-import java.io.FileOutputStream
+import java.io.*
 
 class JpgMetadataService {
     fun load(file: File): JpgMetadata {
@@ -51,15 +49,30 @@ class JpgMetadataService {
     fun saveAs(jpgMetadata: JpgMetadata, output: File) {
         FileOutputStream(output).use { fos ->
             BufferedOutputStream(fos).use { os ->
-                val outputSet = metadata(jpgMetadata.file).exif?.outputSet ?: TiffOutputSet()
-                val exifDirectory = outputSet.getOrCreateRootDirectory()
-                exifDirectory.setTag(EXIF_TAG_XP_TITLE, jpgMetadata.title)
-                exifDirectory.setTag(EXIF_TAG_XP_KEYWORDS, jpgMetadata.keywords.joinToString(";"))
-                exifDirectory.setTag(EXIF_TAG_XP_COMMENT, jpgMetadata.comment)
-                ExifRewriter().updateExifMetadataLossless(jpgMetadata.file, os, outputSet)
+                saveMetadataInOutputStream(jpgMetadata, os)
             }
         }
     }
+
+    fun save(jpgMetadata: JpgMetadata) {
+        ByteArrayOutputStream().use { os ->
+            saveMetadataInOutputStream(jpgMetadata, os)
+            FileOutputStream(jpgMetadata.file).use {
+                os.writeTo(it)
+            }
+        }
+    }
+
+    private fun saveMetadataInOutputStream(jpgMetadata: JpgMetadata, os: OutputStream) {
+        val outputSet = metadata(jpgMetadata.file).exif?.outputSet ?: TiffOutputSet()
+        val exifDirectory = outputSet.getOrCreateRootDirectory()
+        exifDirectory.setTag(EXIF_TAG_XP_TITLE, jpgMetadata.title)
+        exifDirectory.setTag(EXIF_TAG_XP_KEYWORDS, jpgMetadata.keywords.joinToString(";"))
+        exifDirectory.setTag(EXIF_TAG_XP_COMMENT, jpgMetadata.comment)
+        ExifRewriter().updateExifMetadataLossless(jpgMetadata.file, os, outputSet)
+    }
+
+
 
     private fun TiffOutputDirectory.setTag(tagInfo: TagInfoXpString, value: String) {
         this.removeField(tagInfo) // remove old value

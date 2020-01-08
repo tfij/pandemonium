@@ -2,6 +2,8 @@ package pl.tfij.image.pandemonium
 
 import spock.lang.Specification
 
+import java.nio.channels.FileChannel
+
 class JpgMetadataServiceSpec extends Specification {
     public static final JpgMetadataService jpgMetadataService = new JpgMetadataService()
 
@@ -113,6 +115,65 @@ class JpgMetadataServiceSpec extends Specification {
         image.flash == null
         image.focusLength == null
         image.focusLengthIn35mmFormat == null
+    }
+
+    def "Should override file saving metadata"() {
+        given: "jpg image with empty metadata set"
+        File copedFile = createTempCopy(new File("src/test/resources/image-with-metadata.jpg"))
+        JpgMetadata image = jpgMetadataService.load(copedFile)
+
+        when: "I change metadata"
+        JpgMetadata newImage = image.setTitle("new title")
+                .addKeyword("new keyword")
+                .setComment("new comment")
+
+        and: "save image"
+        jpgMetadataService.save(newImage)
+
+        then: "metadata is updated"
+        JpgMetadata updatedImage = jpgMetadataService.load(copedFile)
+        updatedImage.title == "new title"
+        updatedImage.keywords == ["Niemcy", "Krajobraz", "Jesień", "new keyword"]
+        updatedImage.comment == "new comment"
+        updatedImage.cameraModel == "NIKON D5300"
+        updatedImage.software == "AfterShot 2.4.0.119"
+        updatedImage.exposureTime.toString() == "10/3500 (0,003)"
+        updatedImage.fNumber.toString() == "7025459/1048576 (6,7)"
+        updatedImage.iso == 1600
+        updatedImage.dataTimeOriginal == "2019:11:04 11:40:08"
+        updatedImage.flash == 0
+        updatedImage.focusLength.toString() == "28"
+        updatedImage.focusLengthIn35mmFormat == 42
+    }
+
+    private static File createTempCopy(File originalFile) {
+        File copedFile = File.createTempFile("copedFile", ".jpg")
+        copyFile(originalFile, copedFile)
+        return copedFile
+    }
+
+    private static void copyFile(File sourceFile, File destFile)
+            throws IOException {
+        if (!sourceFile.exists()) {
+            return;
+        }
+        if (!destFile.exists()) {
+            destFile.createNewFile()
+        }
+        FileChannel source = null
+        FileChannel destination = null
+        source = new FileInputStream(sourceFile).getChannel()
+        destination = new FileOutputStream(destFile).getChannel()
+        if (destination != null && source != null) {
+            destination.transferFrom(source, 0, source.size())
+        }
+        if (source != null) {
+            source.close()
+        }
+        if (destination != null) {
+            destination.close()
+        }
+
     }
 
 }
