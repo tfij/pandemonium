@@ -1,4 +1,4 @@
-package pl.tfij.image.pandemonium
+package pl.tfij.image.pandemonium.core
 
 import org.apache.commons.imaging.common.RationalNumber
 import java.io.File

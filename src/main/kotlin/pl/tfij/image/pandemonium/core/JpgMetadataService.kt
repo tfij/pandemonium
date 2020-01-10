@@ -1,6 +1,8 @@
-package pl.tfij.image.pandemonium
+package pl.tfij.image.pandemonium.core
 
 import org.apache.commons.imaging.ImageFormats
+import org.apache.commons.imaging.ImageInfo
+import org.apache.commons.imaging.ImageReadException
 import org.apache.commons.imaging.Imaging
 import org.apache.commons.imaging.common.RationalNumber
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata
@@ -12,12 +14,12 @@ import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoXpString
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet
 import java.io.*
+import java.lang.IllegalArgumentException
 
 class JpgMetadataService {
     fun load(file: File): JpgMetadata {
         require(file.exists()) { "File ${file.absoluteFile} does not exists." }
-        require(JPG_EXTENSION.contains(file.extension.toLowerCase())) { "jpg file required, found ${file.extension}" }
-        val imageInfo = Imaging.getImageInfo(file)
+        val imageInfo = getImageInfo(file)
         require(imageInfo.format.name == ImageFormats.JPEG.name) { "jpg format file required, found ${imageInfo.format.name}" }
         val metadata = metadata(file)
         return JpgMetadata(
@@ -38,6 +40,14 @@ class JpgMetadataService {
             focusLength = metadata.exif?.findField(ExifTagConstants.EXIF_TAG_FOCAL_LENGTH)?.value as RationalNumber?,
             focusLengthIn35mmFormat = metadata.exif?.findField(ExifTagConstants.EXIF_TAG_FOCAL_LENGTH_IN_35MM_FORMAT)?.intValue
         )
+    }
+
+    private fun getImageInfo(file: File): ImageInfo {
+        try {
+            return Imaging.getImageInfo(file)
+        } catch (ex: ImageReadException) {
+            throw IllegalArgumentException("File ${file.absolutePath} is invalid. ${ex.message}", ex)
+        }
     }
 
     private fun metadata(file: File): JpegImageMetadata {
@@ -84,6 +94,5 @@ class JpgMetadataService {
         private val EXIF_TAG_XP_TITLE = TagInfoXpString("XPTitle", 0x9c9b, TiffDirectoryType.TIFF_DIRECTORY_IFD0)
         private val EXIF_TAG_XP_KEYWORDS = TagInfoXpString("XPKeywords", 0x9c9e, TiffDirectoryType.TIFF_DIRECTORY_IFD0)
         private val EXIF_TAG_XP_COMMENT = TagInfoXpString("XPComment", 0x9c9c, TiffDirectoryType.TIFF_DIRECTORY_IFD0)
-        private val JPG_EXTENSION = setOf("jpg", "jpeg")
     }
 }

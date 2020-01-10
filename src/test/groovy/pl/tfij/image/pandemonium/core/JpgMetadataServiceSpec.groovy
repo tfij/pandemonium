@@ -1,6 +1,7 @@
-package pl.tfij.image.pandemonium
+package pl.tfij.image.pandemonium.core
 
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import java.nio.channels.FileChannel
 
@@ -55,6 +56,25 @@ class JpgMetadataServiceSpec extends Specification {
         image.flash == null
         image.focusLength == null
         image.focusLengthIn35mmFormat == null
+    }
+
+    @Unroll
+    def "Should throw exception loading #fileName"() {
+        given: "not jpg file"
+        File file = new File("src/test/resources/$fileName")
+
+        when: "I try to load not jpg file"
+        jpgMetadataService.load(file)
+
+        then:
+        thrown IllegalArgumentException
+
+        where:
+        fileName << [
+            "text-file.jpg",
+            "text-file.txt",
+            "not-existing-file.jpg"
+        ]
     }
 
     def "Should save metadata"() {
