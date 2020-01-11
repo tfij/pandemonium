@@ -24,12 +24,12 @@ class JpgMetadataServiceSpec extends Specification {
         image.comment == "lorem ipsum"
         image.cameraModel == "NIKON D5300"
         image.software == "AfterShot 2.4.0.119"
-        image.exposureTime.toString() == "10/3500 (0,003)"
-        image.fNumber.toString() == "7025459/1048576 (6,7)"
+        image.exposureTime.toText() == "1/350 s"
+        image.fNumber.toText() == "6.7"
         image.iso == 1600
         image.dataTimeOriginal == "2019:11:04 11:40:08"
         image.flash == 0
-        image.focusLength.toString() == "28"
+        image.focusLength == 28
         image.focusLengthIn35mmFormat == 42
     }
 
@@ -98,12 +98,12 @@ class JpgMetadataServiceSpec extends Specification {
         updatedImage.comment == "new comment"
         updatedImage.cameraModel == "NIKON D5300"
         updatedImage.software == "AfterShot 2.4.0.119"
-        updatedImage.exposureTime.toString() == "10/3500 (0,003)"
-        updatedImage.fNumber.toString() == "7025459/1048576 (6,7)"
+        updatedImage.exposureTime.toText() == "1/350 s"
+        updatedImage.fNumber.toText() == "6.7"
         updatedImage.iso == 1600
         updatedImage.dataTimeOriginal == "2019:11:04 11:40:08"
         updatedImage.flash == 0
-        updatedImage.focusLength.toString() == "28"
+        updatedImage.focusLength == 28
         updatedImage.focusLengthIn35mmFormat == 42
     }
 
@@ -157,12 +157,12 @@ class JpgMetadataServiceSpec extends Specification {
         updatedImage.comment == "new comment"
         updatedImage.cameraModel == "NIKON D5300"
         updatedImage.software == "AfterShot 2.4.0.119"
-        updatedImage.exposureTime.toString() == "10/3500 (0,003)"
-        updatedImage.fNumber.toString() == "7025459/1048576 (6,7)"
+        updatedImage.exposureTime.toText() == "1/350 s"
+        updatedImage.fNumber.toText() == "6.7"
         updatedImage.iso == 1600
         updatedImage.dataTimeOriginal == "2019:11:04 11:40:08"
         updatedImage.flash == 0
-        updatedImage.focusLength.toString() == "28"
+        updatedImage.focusLength == 28
         updatedImage.focusLengthIn35mmFormat == 42
     }
 

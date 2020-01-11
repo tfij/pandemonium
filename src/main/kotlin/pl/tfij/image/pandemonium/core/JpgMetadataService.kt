@@ -8,6 +8,7 @@ import org.apache.commons.imaging.common.RationalNumber
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata
 import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter
 import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.*
 import org.apache.commons.imaging.formats.tiff.constants.TiffDirectoryType
 import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoAscii
 import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoXpString
@@ -31,14 +32,14 @@ class JpgMetadataService {
             keywords = metadata.exif?.findField(EXIF_TAG_XP_KEYWORDS)?.stringValue?.split(";") ?: emptyList(),
             comment = metadata.exif?.findField(EXIF_TAG_XP_COMMENT)?.stringValue ?: "",
             cameraModel = metadata.exif?.findField(EXIF_TAG_MODEL)?.stringValue ?: "",
-            software = metadata.exif?.findField(ExifTagConstants.EXIF_TAG_SOFTWARE)?.stringValue ?: "",
-            fNumber = metadata.exif?.findField(ExifTagConstants.EXIF_TAG_FNUMBER)?.value as RationalNumber?,
-            exposureTime = metadata.exif?.findField(ExifTagConstants.EXIF_TAG_EXPOSURE_TIME)?.value as RationalNumber?,
-            iso = metadata.exif?.findField(ExifTagConstants.EXIF_TAG_ISO)?.intValue,
-            dataTimeOriginal = metadata.exif?.findField(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL)?.stringValue,
-            flash = metadata.exif?.findField(ExifTagConstants.EXIF_TAG_FLASH)?.intValue,
-            focusLength = metadata.exif?.findField(ExifTagConstants.EXIF_TAG_FOCAL_LENGTH)?.value as RationalNumber?,
-            focusLengthIn35mmFormat = metadata.exif?.findField(ExifTagConstants.EXIF_TAG_FOCAL_LENGTH_IN_35MM_FORMAT)?.intValue
+            software = metadata.exif?.findField(EXIF_TAG_SOFTWARE)?.stringValue ?: "",
+            fNumber = (metadata.exif?.findField(EXIF_TAG_FNUMBER)?.value as RationalNumber?)?.let { FNumber(it.numerator, it.divisor) },
+            exposureTime = (metadata.exif?.findField(EXIF_TAG_EXPOSURE_TIME)?.value as RationalNumber?)?.let { ExposureTime(it.numerator, it.divisor) },
+            iso = metadata.exif?.findField(EXIF_TAG_ISO)?.intValue,
+            dataTimeOriginal = metadata.exif?.findField(EXIF_TAG_DATE_TIME_ORIGINAL)?.stringValue,
+            flash = metadata.exif?.findField(EXIF_TAG_FLASH)?.intValue,
+            focusLength = (metadata.exif?.findField(EXIF_TAG_FOCAL_LENGTH)?.value as RationalNumber?)?.toInt(),
+            focusLengthIn35mmFormat = metadata.exif?.findField(EXIF_TAG_FOCAL_LENGTH_IN_35MM_FORMAT)?.intValue
         )
     }
 
