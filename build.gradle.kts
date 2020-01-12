@@ -1,6 +1,8 @@
 plugins {
     kotlin("jvm") version "1.3.61"
+    application
     groovy
+    id("org.openjfx.javafxplugin") version "0.0.8"
 }
 
 group = "pl.tfij.image"
@@ -16,6 +18,10 @@ dependencies {
 
     testCompile("org.codehaus.groovy:groovy-all:2.5.8")
     testCompile("org.spockframework:spock-core:1.3-groovy-2.5")
+}
+
+application {
+    mainClassName = "pl.tfij.image.pandemonium.gui.Main"
 }
 
 tasks {
