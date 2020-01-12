@@ -1,6 +1,5 @@
 package pl.tfij.image.pandemonium.core
 
-import org.apache.commons.imaging.common.RationalNumber
 import java.io.File
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -32,9 +31,11 @@ data class JpgMetadata(
 ) {
     fun setTitle(title: String): JpgMetadata = copy(title = title)
 
-    fun setKeywords(keywords: List<String>): JpgMetadata = copy(keywords = keywords)
+    fun setKeywords(keywords: List<String>): JpgMetadata = copy(keywords = keywords.distinct())
 
-    fun addKeyword(keyword: String): JpgMetadata = setKeywords(keywords.plus(keyword))
+    fun addKeyword(keyword: String): JpgMetadata = setKeywords(keywords.plus(keyword).distinct())
+
+    fun removeKeyword(keyword: String): JpgMetadata = setKeywords(keywords.minus(keyword))
 
     fun setComment(comment: String): JpgMetadata = copy(comment = comment)
 }
