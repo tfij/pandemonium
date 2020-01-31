@@ -23,7 +23,10 @@ class InMemoryKeywordRepository : KeywordRepository {
     }
 
     override fun addLastUsedKeyword(keyword: String) {
-        lastUsedKeywords.add(keyword)
+        if (!lastUsedKeywords.contains(keyword)) {
+            lastUsedKeywords.add(keyword)
+            lastUsedKeywords.distinct()
+        }
     }
 
 }

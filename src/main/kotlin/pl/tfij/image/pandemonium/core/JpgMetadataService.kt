@@ -7,7 +7,6 @@ import org.apache.commons.imaging.Imaging
 import org.apache.commons.imaging.common.RationalNumber
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata
 import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter
-import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants
 import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.*
 import org.apache.commons.imaging.formats.tiff.constants.TiffDirectoryType
 import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoAscii
@@ -17,7 +16,7 @@ import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet
 import java.io.*
 import java.lang.IllegalArgumentException
 
-class JpgMetadataService {
+class JpgMetadataService(private val keywordRepository: KeywordRepository) {
     fun load(file: File): JpgMetadata {
         require(file.exists()) { "File ${file.absoluteFile} does not exists." }
         val imageInfo = getImageInfo(file)
@@ -88,6 +87,18 @@ class JpgMetadataService {
     private fun TiffOutputDirectory.setTag(tagInfo: TagInfoXpString, value: String) {
         this.removeField(tagInfo) // remove old value
         this.add(tagInfo, value)
+    }
+
+    fun standardKeywords(): List<String> {
+        return keywordRepository.standardKeywords()
+    }
+
+    fun lastUsedKeywords(): List<String> {
+        return keywordRepository.lastUsedKeywords()
+    }
+
+    fun addLastUsedKeyword(keyword: String) {
+        keywordRepository.addLastUsedKeyword(keyword)
     }
 
     companion object {

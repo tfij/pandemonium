@@ -23,6 +23,7 @@ class ExposureTimeSpec extends Specification {
         15        | 1       | "15 s"
         20        | 5       | "4 s"
         20        | 6       | "3.3 s"
+        200       | 10      | "20 s"
     }
 
 }

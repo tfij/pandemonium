@@ -21,13 +21,11 @@ import javafx.stage.Modality
 import javafx.stage.Stage
 import pl.tfij.image.pandemonium.core.JpgMetadata
 import pl.tfij.image.pandemonium.core.JpgMetadataService
-import pl.tfij.image.pandemonium.core.KeywordRepository
 
 
 class JpgMetadataPanel(
     private var image: JpgMetadata,
-    private val jpgMetadataService: JpgMetadataService,
-    private val keywordRepository: KeywordRepository
+    private val jpgMetadataService: JpgMetadataService
 ) : GridPane() {
 
     val keywordsPane = VBox()
@@ -66,7 +64,7 @@ class JpgMetadataPanel(
     }
 
     private fun GridPane.addRow(rowIndex: Int, name: String, value: Int?) {
-        addRow(rowIndex, name, value.toString())
+        addRow(rowIndex, name, value?.toString())
     }
 
     private fun GridPane.addEditableRow(rowIndex: Int, name: String, value: String?, callback: (String) -> Unit) {
@@ -92,7 +90,7 @@ class JpgMetadataPanel(
                     .also { button -> button.setOnAction {
                         val fileChooser = FileChooser()
                         fileChooser.extensionFilters.add(ExtensionFilter("JPG files (*.jpg)", "*.jpg", "*.jpeg", "*.JPG", "*.JPEG"))
-                        fileChooser.showSaveDialog(parent.scene.window as Stage)
+                        fileChooser.showSaveDialog(parent.scene.window)
                             ?.also { file -> jpgMetadataService.saveAs(image, file) }
                     } }
                     .also { button -> children.add(button) }
@@ -155,7 +153,7 @@ class JpgMetadataPanel(
     }
 
     private fun selectStandardKeywordPane(): Pane {
-        val standardKeywordsChoiceBox = ChoiceBox(FXCollections.observableArrayList(keywordRepository.standardKeywords()))
+        val standardKeywordsChoiceBox = ChoiceBox(FXCollections.observableArrayList(jpgMetadataService.standardKeywords()))
         return VBox()
             .apply { spacing = 5.0 }
             .apply { children.add(Text("Standard")) }
@@ -170,7 +168,7 @@ class JpgMetadataPanel(
     }
 
     private fun selectLastUseKeywordPane(): Pane {
-        val lastUsedKeywordsChoiceBox = ChoiceBox(FXCollections.observableArrayList(keywordRepository.lastUsedKeywords()))
+        val lastUsedKeywordsChoiceBox = ChoiceBox(FXCollections.observableArrayList(jpgMetadataService.lastUsedKeywords()))
         return VBox()
             .apply { spacing = 5.0 }
             .apply { children.add(Text("Last used")) }
@@ -202,7 +200,7 @@ class JpgMetadataPanel(
 
     private fun addKeyword(keyWord: String) {
         image = image.addKeyword(keyWord)
-        keywordRepository.addLastUsedKeyword(keyWord)
+        jpgMetadataService.addLastUsedKeyword(keyWord)
         refreshKeywordRow()
     }
 }

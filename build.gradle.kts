@@ -12,6 +12,10 @@ repositories {
     mavenCentral()
 }
 
+javafx {
+    modules("javafx.controls")
+}
+
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.apache.commons:commons-imaging:1.0-alpha1")

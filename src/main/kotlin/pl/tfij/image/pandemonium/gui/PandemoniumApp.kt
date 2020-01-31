@@ -2,12 +2,9 @@ package pl.tfij.image.pandemonium.gui
 
 import javafx.application.Application
 import javafx.scene.Scene
-import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.HBox
-import javafx.scene.layout.Pane
-import javafx.stage.FileChooser
 import javafx.stage.Stage
 import pl.tfij.image.pandemonium.core.InMemoryKeywordRepository
 import pl.tfij.image.pandemonium.core.JpgMetadataService
@@ -22,46 +19,36 @@ class PandemoniumApp : Application() {
     }
 
     override fun start(stage: Stage) {
-        val jpgMetadataService = JpgMetadataService()
-        val keywordRepository = InMemoryKeywordRepository() //TODO service delegate
+        val jpgMetadataService = JpgMetadataService(InMemoryKeywordRepository())
         stage.title = "Pandemonium"
         stage.icons.add(Image("icons/camera64.png"))
-        stage.scene = Scene(rootContent(jpgMetadataService, keywordRepository), 600.0, 400.0)
+        stage.scene = Scene(rootContent(jpgMetadataService), 600.0, 400.0)
         stage.show()
-
     }
 
     private fun rootContent(
-        jpgMetadataService: JpgMetadataService,
-        keywordRepository: InMemoryKeywordRepository
+        jpgMetadataService: JpgMetadataService
     ): HBox {
         val root = HBox()
         val loadedImageGroup = HBox()
             .apply { spacing = 5.0 }
-        root.children.add(loadImageButton(loadedImageGroup, jpgMetadataService, keywordRepository))
+        root.children.add(loadImagePanel(loadedImageGroup, jpgMetadataService))
         root.children.add(loadedImageGroup)
         return root
     }
 
-    private fun loadImageButton(
-        imageDataTargetPane: Pane,
-        jpgMetadataService: JpgMetadataService,
-        keywordRepository: InMemoryKeywordRepository
-    ): Button {
-        val fileChooser = FileChooser()
-        fileChooser.title = "Open Resource File"
-        val extFilter = FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.jpg", "*.jpeg", "*.JPG", "*.JPEG")
-        fileChooser.extensionFilters.add(extFilter)
-        val button = Button("Load image", ImageView(Image("icons/loadImage24.png")))
-        button.setOnAction {
-            val file = fileChooser.showOpenDialog(imageDataTargetPane.scene.window as Stage)
-            file?.let {
-                imageDataTargetPane.children.clear()
-                imageDataTargetPane.children.add(imageThumb(file))
-                imageDataTargetPane.children.add(JpgMetadataPanel(jpgMetadataService.load(file), jpgMetadataService, keywordRepository))
+    private fun loadImagePanel(
+        loadedImageGroup: HBox,
+        jpgMetadataService: JpgMetadataService
+    ): LoadImagePanel {
+        return LoadImagePanel(
+            { loadedImageGroup.scene.window },
+            { file ->
+                loadedImageGroup.children.clear()
+                loadedImageGroup.children.add(imageThumb(file))
+                loadedImageGroup.children.add(JpgMetadataPanel(jpgMetadataService.load(file), jpgMetadataService))
             }
-        }
-        return button
+        )
     }
 
     private fun imageThumb(file: File): ImageView {

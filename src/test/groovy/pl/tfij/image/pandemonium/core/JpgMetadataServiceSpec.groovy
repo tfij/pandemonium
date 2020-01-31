@@ -6,7 +6,7 @@ import spock.lang.Unroll
 import java.nio.channels.FileChannel
 
 class JpgMetadataServiceSpec extends Specification {
-    public static final JpgMetadataService jpgMetadataService = new JpgMetadataService()
+    public static final JpgMetadataService jpgMetadataService = new JpgMetadataService(new InMemoryKeywordRepository())
 
     def "Should load jpg metadata"() {
         given: "jpg image with configured metadata"

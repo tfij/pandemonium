@@ -4,13 +4,6 @@ import java.io.File
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-fun main() {
-    val jpgImages = JpgMetadataService()
-    val image = jpgImages.load(File("src/main/resources/image-with-metadata.jpg"))
-    jpgImages.saveAs(image.setKeywords(listOf("Niemcy", "Krajobraz", "Jesień")).setTitle("a title").setComment("lorem ipsum"), File("src/main/resources/DSC_1183-out.jpg"))
-}
-
-
 data class JpgMetadata(
     val file: File,
     val width: Int,
@@ -62,6 +55,7 @@ data class ExposureTime(private val numerator: Int, private val divisor: Int) {
         } else {
             BigDecimal(numerator).divide(BigDecimal(divisor), 1, RoundingMode.HALF_EVEN)
                 .stripTrailingZeros()
+                .toPlainString()
                 .let { "$it s" }
         }
     }
