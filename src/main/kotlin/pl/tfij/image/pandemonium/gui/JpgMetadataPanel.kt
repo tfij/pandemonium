@@ -25,7 +25,8 @@ import pl.tfij.image.pandemonium.core.JpgMetadataService
 
 class JpgMetadataPanel(
     private var image: JpgMetadata,
-    private val jpgMetadataService: JpgMetadataService
+    private val jpgMetadataService: JpgMetadataService,
+    private val statusBar: StatusBar
 ) : GridPane() {
 
     val keywordsPane = VBox()
@@ -82,7 +83,10 @@ class JpgMetadataPanel(
             .apply { spacing = 3.0 }
             .apply {
                 Button("Save", ImageView(Image("icons/accept16.png")))
-                    .also { button -> button.setOnAction { jpgMetadataService.save(image) } }
+                    .also { button -> button.setOnAction {
+                        jpgMetadataService.save(image)
+                        statusBar.push(Message("Image saved"))
+                    } }
                     .also { button -> children.add(button) }
             }
             .apply {
@@ -91,7 +95,10 @@ class JpgMetadataPanel(
                         val fileChooser = FileChooser()
                         fileChooser.extensionFilters.add(ExtensionFilter("JPG files (*.jpg)", "*.jpg", "*.jpeg", "*.JPG", "*.JPEG"))
                         fileChooser.showSaveDialog(parent.scene.window)
-                            ?.also { file -> jpgMetadataService.saveAs(image, file) }
+                            ?.also {
+                                    file -> jpgMetadataService.saveAs(image, file)
+                                    statusBar.push(Message("Image saved as ${file.name}"))
+                            }
                     } }
                     .also { button -> children.add(button) }
             }
@@ -118,6 +125,7 @@ class JpgMetadataPanel(
                 .apply { graphic = ImageView(Image("icons/trash16.png")) }
                 .apply { setOnAction {
                     image = image.removeKeyword(keyword)
+                    statusBar.push(Message("Key word '$keyword' was removed"))
                     refreshKeywordRow()
                 } }
             HBox(keywordLabel, deleteButton)
@@ -202,5 +210,6 @@ class JpgMetadataPanel(
         image = image.addKeyword(keyWord)
         jpgMetadataService.addLastUsedKeyword(keyWord)
         refreshKeywordRow()
+        statusBar.push(Message("Key word '$keyWord' was added"))
     }
 }

@@ -2,8 +2,11 @@ package pl.tfij.image.pandemonium.gui
 
 import javafx.application.Application
 import javafx.scene.Scene
+import javafx.scene.control.Control
+import javafx.scene.control.ScrollPane
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
 import pl.tfij.image.pandemonium.core.InMemoryKeywordRepository
@@ -22,31 +25,45 @@ class PandemoniumApp : Application() {
         val jpgMetadataService = JpgMetadataService(InMemoryKeywordRepository())
         stage.title = "Pandemonium"
         stage.icons.add(Image("icons/camera64.png"))
-        stage.scene = Scene(rootContent(jpgMetadataService), 600.0, 400.0)
+        stage.scene = Scene(rootComponent(jpgMetadataService), 600.0, 400.0)
         stage.show()
     }
 
-    private fun rootContent(
+    private fun rootComponent(
         jpgMetadataService: JpgMetadataService
-    ): HBox {
-        val root = HBox()
+    ): BorderPane {
+        val root = BorderPane()
+        val statusBar = StatusBar()
+        root.center = centerContent(jpgMetadataService, statusBar)
+        root.bottom = statusBar
+        return root
+    }
+
+    private fun centerContent(
+        jpgMetadataService: JpgMetadataService,
+        statusBar: StatusBar
+    ): Control {
+        val center = HBox()
         val loadedImageGroup = HBox()
             .apply { spacing = 5.0 }
-        root.children.add(loadImagePanel(loadedImageGroup, jpgMetadataService))
-        root.children.add(loadedImageGroup)
-        return root
+        center.children.add(loadImagePanel(loadedImageGroup, jpgMetadataService, statusBar))
+        center.children.add(loadedImageGroup)
+        return ScrollPane(center)
+            .apply { isFitToHeight = true }
     }
 
     private fun loadImagePanel(
         loadedImageGroup: HBox,
-        jpgMetadataService: JpgMetadataService
+        jpgMetadataService: JpgMetadataService,
+        statusBar: StatusBar
     ): LoadImagePanel {
         return LoadImagePanel(
             { loadedImageGroup.scene.window },
             { file ->
+                statusBar.push(Message("Loaded ${file.name}"))
                 loadedImageGroup.children.clear()
                 loadedImageGroup.children.add(imageThumb(file))
-                loadedImageGroup.children.add(JpgMetadataPanel(jpgMetadataService.load(file), jpgMetadataService))
+                loadedImageGroup.children.add(JpgMetadataPanel(jpgMetadataService.load(file), jpgMetadataService, statusBar))
             }
         )
     }
