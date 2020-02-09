@@ -1,4 +1,4 @@
-package pl.tfij.image.pandemonium.gui
+package pl.tfij.image.pandemonium.gui.imageselection
 
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
@@ -8,9 +8,17 @@ import javafx.scene.control.TreeView
 import javafx.util.Callback
 import java.io.File
 
-class DirectoryTreeView(private val file: File) : TreeView<File>(DirectoryTreeItem(file)) {
+class DirectoryTreeView(private val file: File) : TreeView<File>(
+    DirectoryTreeItem(
+        file
+    )
+) {
     init {
-        cellFactory = Callback<TreeView<File>, TreeCell<File>> { FileNameTreeCell(file) }
+        cellFactory = Callback<TreeView<File>, TreeCell<File>> {
+            FileNameTreeCell(
+                file
+            )
+        }
     }
 }
 
@@ -56,7 +64,11 @@ private class DirectoryTreeItem(file: File) : TreeItem<File>(file) {
         return TreeItem.value.listFiles()
             ?.filter { it.isDirectory }
             ?.sortedBy { it.name.toLowerCase() }
-            ?.map { childFile -> DirectoryTreeItem(childFile) }
+            ?.map { childFile ->
+                DirectoryTreeItem(
+                    childFile
+                )
+            }
             ?.let { FXCollections.observableArrayList<TreeItem<File>>().apply { addAll(it) } }
             ?: FXCollections.emptyObservableList()
 

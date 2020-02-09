@@ -101,6 +101,14 @@ class JpgMetadataService(private val keywordRepository: KeywordRepository) {
         keywordRepository.addLastUsedKeyword(keyword)
     }
 
+    fun addStandardKeyword(keyword: String) {
+        keywordRepository.addStandardKeyword(keyword)
+    }
+
+    fun deleteStandardKeyword(keyword: String) {
+        keywordRepository.deleteStandardKeyword(keyword)
+    }
+
     companion object {
         private val EXIF_TAG_MODEL = TagInfoAscii("Model", 0x0110, -1, TiffDirectoryType.TIFF_DIRECTORY_IFD0)
         private val EXIF_TAG_XP_TITLE = TagInfoXpString("XPTitle", 0x9c9b, TiffDirectoryType.TIFF_DIRECTORY_IFD0)

@@ -1,4 +1,4 @@
-package pl.tfij.image.pandemonium.gui
+package pl.tfij.image.pandemonium.gui.imageselection
 
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
@@ -17,7 +17,11 @@ class ImageListView(private val imageSize: Double, private val executorService: 
     init {
         cellFactory = Callback<ListView<File>, ListCell<File>> {
             val imageView = ImageView()
-            ImageListCell(imageView, imageSize, executorService)
+            ImageListCell(
+                imageView,
+                imageSize,
+                executorService
+            )
                 .apply { graphic = imageView }
         }
     }

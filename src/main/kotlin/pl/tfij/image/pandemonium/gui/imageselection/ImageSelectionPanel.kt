@@ -1,4 +1,4 @@
-package pl.tfij.image.pandemonium.gui
+package pl.tfij.image.pandemonium.gui.imageselection
 
 import javafx.collections.FXCollections
 import javafx.scene.layout.HBox
@@ -8,8 +8,10 @@ import java.util.concurrent.Executors
 
 class ImageSelectionPanel(private val onImageSelected: (File) -> Unit) : HBox() {
     private val threadPool = Executors.newFixedThreadPool(10)
-    private val directoryTreeView = DirectoryTreeView(File(System.getProperty("user.home")))
-        .apply { selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+    private val directoryTreeView = DirectoryTreeView(
+        File(System.getProperty("user.home"))
+    )
+        .apply { selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             val files = newValue?.value
                 ?.listFiles()
                 ?.filter { it.isJpg() }
@@ -17,8 +19,11 @@ class ImageSelectionPanel(private val onImageSelected: (File) -> Unit) : HBox() 
                 ?: emptyList()
             imageListView.items = FXCollections.observableArrayList(files)
         } }
-    private val imageListView = ImageListView(100.0, threadPool)
-        .apply { selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+    private val imageListView = ImageListView(
+        100.0,
+        threadPool
+    )
+        .apply { selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             if (newValue != null) {
                 onImageSelected(newValue)
             }
