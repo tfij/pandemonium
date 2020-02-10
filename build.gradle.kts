@@ -19,6 +19,7 @@ javafx {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.apache.commons:commons-imaging:1.0-alpha1")
+    implementation("com.google.inject:guice:4.0")
 
     testCompile("org.codehaus.groovy:groovy-all:2.5.8")
     testCompile("org.spockframework:spock-core:1.3-groovy-2.5")

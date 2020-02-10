@@ -1,5 +1,6 @@
 package pl.tfij.image.pandemonium.gui.menu
 
+import com.google.inject.Inject
 import javafx.collections.FXCollections
 import javafx.scene.control.Button
 import javafx.scene.control.Label
@@ -13,7 +14,7 @@ import javafx.scene.layout.VBox
 import pl.tfij.image.pandemonium.core.JpgMetadataService
 
 
-class StandardKeywordsConfigurationPanel(private val jpgMetadataService: JpgMetadataService) : VBox() {
+class StandardKeywordsConfigurationPanel @Inject constructor(private val jpgMetadataService: JpgMetadataService) : VBox() {
 
     private val observableList = FXCollections.observableList(jpgMetadataService.standardKeywords().map { LabelAndButtonCell(it, handleAddKeywordAction()) })
 
@@ -28,9 +29,10 @@ class StandardKeywordsConfigurationPanel(private val jpgMetadataService: JpgMeta
     private val addKeywordButton = Button("Add keyword", ImageView("icons/plus16.png")).apply {
         setOnAction {
             keywordInputDialog.editor.text = ""
-            keywordInputDialog.showAndWait().ifPresent {
-                jpgMetadataService.addStandardKeyword(it)
-                observableList.add(LabelAndButtonCell(it, handleAddKeywordAction()))
+            keywordInputDialog.showAndWait().ifPresent { keywordToAdd ->
+                jpgMetadataService.addStandardKeyword(keywordToAdd)
+                observableList.add(LabelAndButtonCell(keywordToAdd, handleAddKeywordAction()))
+                observableList.sortBy { it.labelText.toLowerCase() }
             }
         }
     }

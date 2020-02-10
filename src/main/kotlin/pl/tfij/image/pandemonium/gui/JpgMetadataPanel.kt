@@ -1,5 +1,6 @@
 package pl.tfij.image.pandemonium.gui
 
+import com.google.inject.Inject
 import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
@@ -23,7 +24,7 @@ import pl.tfij.image.pandemonium.core.JpgMetadata
 import pl.tfij.image.pandemonium.core.JpgMetadataService
 
 
-class JpgMetadataPanel(
+class JpgMetadataPanel @Inject constructor(
     private val jpgMetadataService: JpgMetadataService,
     private val statusBar: StatusBar
 ) : GridPane() {

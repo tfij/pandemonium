@@ -1,12 +1,16 @@
 package pl.tfij.image.pandemonium.gui.imageselection
 
+import com.google.inject.Inject
 import javafx.collections.FXCollections
 import javafx.scene.layout.HBox
 import pl.tfij.image.pandemonium.core.isJpg
+import pl.tfij.image.pandemonium.gui.ImageDetailsPanel
+import pl.tfij.image.pandemonium.gui.Message
+import pl.tfij.image.pandemonium.gui.StatusBar
 import java.io.File
 import java.util.concurrent.Executors
 
-class ImageSelectionPanel(private val onImageSelected: (File) -> Unit) : HBox() {
+open class GenericImageSelectionPanel(private val onImageSelected: (File) -> Unit) : HBox() {
     private val threadPool = Executors.newFixedThreadPool(10)
     private val directoryTreeView = DirectoryTreeView(
         File(System.getProperty("user.home"))
@@ -34,3 +38,8 @@ class ImageSelectionPanel(private val onImageSelected: (File) -> Unit) : HBox() 
         children.add(imageListView)
     }
 }
+
+class ImageSelectionPanel @Inject constructor(statusBar: StatusBar, imageDetailsPanel: ImageDetailsPanel) : GenericImageSelectionPanel ({ file ->
+    statusBar.push(Message("Loaded ${file.name}"))
+    imageDetailsPanel.setFile(file)
+})

@@ -1,16 +1,16 @@
 package pl.tfij.image.pandemonium.gui
 
+import com.google.inject.Guice
+import com.google.inject.Injector
 import javafx.application.Application
 import javafx.scene.Scene
 import javafx.scene.control.ScrollPane
 import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
-import pl.tfij.image.pandemonium.core.JpgMetadataService
-import pl.tfij.image.pandemonium.core.PreferencesKeywordRepository
 import pl.tfij.image.pandemonium.gui.imageselection.ImageSelectionPanel
+import pl.tfij.image.pandemonium.gui.infrastructure.GuiceModule
 import pl.tfij.image.pandemonium.gui.menu.AppMenuBar
-import java.time.Clock
 
 class PandemoniumApp : Application() {
 
@@ -21,24 +21,22 @@ class PandemoniumApp : Application() {
     }
 
     override fun start(stage: Stage) {
-        val jpgMetadataService = JpgMetadataService(PreferencesKeywordRepository(5, Clock.systemDefaultZone()))
+        val injector: Injector = Guice.createInjector(GuiceModule())
         stage.title = "Pandemonium"
         stage.icons.add(Image("icons/camera64.png"))
-        stage.scene = Scene(rootComponent(jpgMetadataService), 900.0, 700.0)
+        stage.scene = Scene(rootComponent(injector), 900.0, 700.0)
         stage.show()
     }
 
-    private fun rootComponent(
-        jpgMetadataService: JpgMetadataService
-    ): BorderPane {
+    private fun rootComponent(injector: Injector): BorderPane {
+        val appMenuBar = injector.getInstance(AppMenuBar::class.java)
+        val statusBar = injector.getInstance(StatusBar::class.java)
+        val imageDetailsPanel = injector.getInstance(ImageDetailsPanel::class.java)
+        val imageSelectionPanel = injector.getInstance(ImageSelectionPanel::class.java)
+
         val root = BorderPane()
-        val statusBar = StatusBar()
-        val imageDetailsPanel = ImageDetailsPanel(jpgMetadataService, statusBar)
-        root.top = AppMenuBar(jpgMetadataService)
-        root.left = ImageSelectionPanel { file ->
-            statusBar.push(Message("Loaded ${file.name}"))
-            imageDetailsPanel.setFile(file)
-        }
+        root.top = appMenuBar
+        root.left = imageSelectionPanel
         root.center = ScrollPane(imageDetailsPanel)
         root.bottom = statusBar
         return root

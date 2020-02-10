@@ -1,11 +1,12 @@
 package pl.tfij.image.pandemonium.gui
 
+import com.google.inject.Inject
 import javafx.geometry.Insets
 import javafx.scene.layout.HBox
 import javafx.scene.text.Font
 import javafx.scene.text.Text
 
-class StatusBar : HBox() {
+class StatusBar @Inject constructor() : HBox() {
 
     private val messageText = Text()
 

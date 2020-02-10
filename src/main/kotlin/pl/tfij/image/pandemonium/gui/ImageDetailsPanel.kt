@@ -1,5 +1,6 @@
 package pl.tfij.image.pandemonium.gui
 
+import com.google.inject.Inject
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.VBox
@@ -7,15 +8,13 @@ import pl.tfij.image.pandemonium.core.JpgMetadataService
 import java.io.File
 
 
-class ImageDetailsPanel(private val jpgMetadataService: JpgMetadataService,
-                        statusBar: StatusBar) : VBox() {
+class ImageDetailsPanel @Inject constructor(private val metadataPanel: JpgMetadataPanel, private val jpgMetadataService: JpgMetadataService) : VBox() {
 
     private val imagePreview: ImageView = ImageView().apply { isVisible = false }
-    private val metadataPanel: JpgMetadataPanel = JpgMetadataPanel(jpgMetadataService, statusBar).apply { isVisible = false }
 
     init {
         children.add(imagePreview)
-        children.add(metadataPanel)
+        children.add(metadataPanel.apply { isVisible = false })
     }
 
     fun setFile(file: File) {
