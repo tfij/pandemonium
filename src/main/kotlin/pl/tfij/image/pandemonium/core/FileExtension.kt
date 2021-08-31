@@ -8,5 +8,5 @@ private val jpgExtensions = listOf(
 )
 
 fun File.isJpg(): Boolean {
-    return isFile && jpgExtensions.contains(extension.toLowerCase())
+    return isFile && jpgExtensions.contains(extension.lowercase())
 }

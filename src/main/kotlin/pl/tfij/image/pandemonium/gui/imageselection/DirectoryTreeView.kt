@@ -63,7 +63,7 @@ private class DirectoryTreeItem(file: File) : TreeItem<File>(file) {
     private fun buildChildren(TreeItem: TreeItem<File>): ObservableList<TreeItem<File>> {
         return TreeItem.value.listFiles()
             ?.filter { it.isDirectory }
-            ?.sortedBy { it.name.toLowerCase() }
+            ?.sortedBy { it.name.lowercase() }
             ?.map { childFile ->
                 DirectoryTreeItem(
                     childFile
