@@ -9,27 +9,30 @@ import pl.tfij.image.pandemonium.gui.Message
 import pl.tfij.image.pandemonium.gui.StatusBar
 import java.io.File
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 open class GenericImageSelectionPanel(executorService: ExecutorService, private val onImageSelected: (File) -> Unit) : HBox() {
     private val initDirLocation = File(System.getProperty("user.home"))
 
     private val directoryTreeView = DirectoryTreeView(initDirLocation)
-        .apply { selectionModel.selectedItemProperty().addListener { _, _, newValue ->
-            val files = newValue?.value
-                ?.listFiles()
-                ?.filter { it.isJpg() }
-                ?.sortedBy { it.name.lowercase() }
-                ?: emptyList()
-            imageListView.items = FXCollections.observableArrayList(files)
-        } }
+        .apply {
+            selectionModel.selectedItemProperty().addListener { _, _, newValue ->
+                val files = newValue?.value
+                    ?.listFiles()
+                    ?.filter { it.isJpg() }
+                    ?.sortedBy { it.name.lowercase() }
+                    ?: emptyList()
+                imageListView.items = FXCollections.observableArrayList(files)
+            }
+        }
 
     private val imageListView = ImageListView(100.0, executorService)
-        .apply { selectionModel.selectedItemProperty().addListener { _, _, newValue ->
-            if (newValue != null) {
-                onImageSelected(newValue)
+        .apply {
+            selectionModel.selectedItemProperty().addListener { _, _, newValue ->
+                if (newValue != null) {
+                    onImageSelected(newValue)
+                }
             }
-        } }
+        }
 
     init {
         children.add(directoryTreeView)
@@ -46,4 +49,5 @@ class ImageSelectionPanel @Inject constructor(
     onImageSelected = { file ->
         statusBar.push(Message("Loaded ${file.name}"))
         imageDetailsPanel.setFile(file)
-    })
+    }
+)

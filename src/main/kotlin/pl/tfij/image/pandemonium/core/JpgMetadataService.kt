@@ -7,14 +7,24 @@ import org.apache.commons.imaging.Imaging
 import org.apache.commons.imaging.common.RationalNumber
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata
 import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter
-import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.*
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.EXIF_TAG_EXPOSURE_TIME
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.EXIF_TAG_FLASH
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.EXIF_TAG_FNUMBER
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.EXIF_TAG_FOCAL_LENGTH
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.EXIF_TAG_FOCAL_LENGTH_IN_35MM_FORMAT
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.EXIF_TAG_ISO
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.EXIF_TAG_SOFTWARE
 import org.apache.commons.imaging.formats.tiff.constants.TiffDirectoryType
 import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoAscii
 import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoXpString
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet
-import java.io.*
-import java.lang.IllegalArgumentException
+import java.io.BufferedOutputStream
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 
 class JpgMetadataService(private val keywordRepository: KeywordRepository) {
     fun load(file: File): JpgMetadata {
@@ -51,9 +61,9 @@ class JpgMetadataService(private val keywordRepository: KeywordRepository) {
     }
 
     private fun metadata(file: File): JpegImageMetadata {
-        return (Imaging.getMetadata(file)
+        return Imaging.getMetadata(file)
             ?.let { it as JpegImageMetadata }
-            ?: JpegImageMetadata(null, null))
+            ?: JpegImageMetadata(null, null)
     }
 
     fun saveAs(jpgMetadata: JpgMetadata, output: File) {
@@ -81,8 +91,6 @@ class JpgMetadataService(private val keywordRepository: KeywordRepository) {
         exifDirectory.setTag(EXIF_TAG_XP_COMMENT, jpgMetadata.comment)
         ExifRewriter().updateExifMetadataLossless(jpgMetadata.file, os, outputSet)
     }
-
-
 
     private fun TiffOutputDirectory.setTag(tagInfo: TagInfoXpString, value: String) {
         this.removeField(tagInfo) // remove old value

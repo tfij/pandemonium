@@ -7,7 +7,6 @@ import javafx.scene.layout.VBox
 import pl.tfij.image.pandemonium.core.JpgMetadataService
 import java.io.File
 
-
 class ImageDetailsPanel @Inject constructor(private val metadataPanel: JpgMetadataPanel, private val jpgMetadataService: JpgMetadataService) : VBox() {
 
     private val imagePreview: ImageView = ImageView().apply { isVisible = false }
@@ -23,5 +22,4 @@ class ImageDetailsPanel @Inject constructor(private val metadataPanel: JpgMetada
         imagePreview.image = Image(file.inputStream(), 300.0, 300.0, true, false)
         imagePreview.isVisible = true
     }
-
 }

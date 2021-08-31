@@ -48,7 +48,7 @@ data class ExposureTime(private val numerator: Int, private val divisor: Int) {
     fun toText(): String {
         return if (numerator.toDouble() < divisor.toDouble()) {
             if (divisor.rem(numerator) == 0) {
-                "1/${divisor/numerator} s"
+                "1/${divisor / numerator} s"
             } else {
                 "$numerator/$divisor s"
             }
@@ -66,4 +66,3 @@ data class FNumber(private val numerator: Int, private val divisor: Int) {
         return BigDecimal(numerator).divide(BigDecimal(divisor), 1, RoundingMode.HALF_EVEN).stripTrailingZeros().toPlainString()
     }
 }
-
