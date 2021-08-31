@@ -51,15 +51,15 @@ private class ImageListCell(
 
     private fun resetTask() {
         if (loadingTaskNotFinished()) {
-            loadingTask.get().cancel();
+            loadingTask.get().cancel()
         }
-        loadingTask.set(null);
+        loadingTask.set(null)
     }
 
     private fun loadingTaskNotFinished(): Boolean {
         return loadingTask.get() != null &&
-                loadingTask.get().state != Worker.State.SUCCEEDED &&
-                loadingTask.get().state != Worker.State.FAILED
+            loadingTask.get().state != Worker.State.SUCCEEDED &&
+            loadingTask.get().state != Worker.State.FAILED
     }
 
     private fun createTask(item: File): Task<Image> {

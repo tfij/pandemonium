@@ -89,6 +89,4 @@ class PreferencesKeywordRepository(private val maxNumberOfStoredLastUsedKeywords
             .drop(maxNumberOfStoredLastUsedKeywords - 1)
             .forEach { key -> lastUsedKeywordPreferences.remove(key) }
     }
-
-
 }

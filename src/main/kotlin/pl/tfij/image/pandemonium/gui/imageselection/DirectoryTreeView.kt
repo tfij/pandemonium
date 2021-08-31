@@ -71,6 +71,5 @@ private class DirectoryTreeItem(file: File) : TreeItem<File>(file) {
             }
             ?.let { FXCollections.observableArrayList<TreeItem<File>>().apply { addAll(it) } }
             ?: FXCollections.emptyObservableList()
-
     }
 }

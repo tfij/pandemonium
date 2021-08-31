@@ -13,11 +13,12 @@ import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import pl.tfij.image.pandemonium.core.JpgMetadataService
 
-
 class StandardKeywordsConfigurationPanel @Inject constructor(private val jpgMetadataService: JpgMetadataService) : VBox() {
 
-    private val observableList = FXCollections.observableList(jpgMetadataService.standardKeywords()
-        .map { LabelAndButtonCell(it, handleAddKeywordAction()) })
+    private val observableList = FXCollections.observableList(
+        jpgMetadataService.standardKeywords()
+            .map { LabelAndButtonCell(it, handleAddKeywordAction()) }
+    )
 
     private val keywordInputDialog = TextInputDialog()
         .apply { title = "New standard keyword" }
@@ -47,8 +48,6 @@ class StandardKeywordsConfigurationPanel @Inject constructor(private val jpgMeta
         jpgMetadataService.deleteStandardKeyword(keyword)
         observableList.removeIf { it.labelText == keyword }
     }
-
-
 }
 
 private class LabelAndButtonCell(val labelText: String, onAction: (keyword: String) -> Unit) : HBox() {

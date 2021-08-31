@@ -23,7 +23,6 @@ import javafx.stage.Stage
 import pl.tfij.image.pandemonium.core.JpgMetadata
 import pl.tfij.image.pandemonium.core.JpgMetadataService
 
-
 class JpgMetadataPanel @Inject constructor(
     private val jpgMetadataService: JpgMetadataService,
     private val statusBar: StatusBar
@@ -123,30 +122,34 @@ class JpgMetadataPanel @Inject constructor(
             .apply { spacing = 3.0 }
             .apply {
                 Button("Save", ImageView(Image("icons/accept16.png")))
-                    .also { button -> button.setOnAction {
-                        checkNotNull(image)
-                        jpgMetadataService.save(image!!)
-                        statusBar.push(Message("Image saved"))
-                    } }
+                    .also { button ->
+                        button.setOnAction {
+                            checkNotNull(image)
+                            jpgMetadataService.save(image!!)
+                            statusBar.push(Message("Image saved"))
+                        }
+                    }
                     .also { button -> children.add(button) }
             }
             .apply {
                 Button("Save as", ImageView(Image("icons/plus16.png")))
-                    .also { button -> button.setOnAction {
-                        val fileChooser = FileChooser()
-                        fileChooser.extensionFilters.add(
-                            FileChooser.ExtensionFilter(
-                                "JPG files (*.jpg)",
-                                "*.jpg", "*.jpeg", "*.JPG", "*.JPEG"
+                    .also { button ->
+                        button.setOnAction {
+                            val fileChooser = FileChooser()
+                            fileChooser.extensionFilters.add(
+                                FileChooser.ExtensionFilter(
+                                    "JPG files (*.jpg)",
+                                    "*.jpg", "*.jpeg", "*.JPG", "*.JPEG"
+                                )
                             )
-                        )
-                        fileChooser.showSaveDialog(parent.scene.window)
-                            ?.also { file ->
-                                checkNotNull(image)
-                                jpgMetadataService.saveAs(image!!, file)
-                                statusBar.push(Message("Image saved as ${file.name}"))
-                            }
-                    } }
+                            fileChooser.showSaveDialog(parent.scene.window)
+                                ?.also { file ->
+                                    checkNotNull(image)
+                                    jpgMetadataService.saveAs(image!!, file)
+                                    statusBar.push(Message("Image saved as ${file.name}"))
+                                }
+                        }
+                    }
                     .also { button -> children.add(button) }
             }
             .also { hbox ->
@@ -161,12 +164,14 @@ class JpgMetadataPanel @Inject constructor(
             val keywordLabel = Label(keyword)
             val deleteButton = Button()
                 .apply { graphic = ImageView(Image("icons/trash16.png")) }
-                .apply { setOnAction {
-                    checkNotNull(image)
-                    image = image!!.removeKeyword(keyword)
-                    statusBar.push(Message("Key word '$keyword' was removed"))
-                    refreshKeywordRow()
-                } }
+                .apply {
+                    setOnAction {
+                        checkNotNull(image)
+                        image = image!!.removeKeyword(keyword)
+                        statusBar.push(Message("Key word '$keyword' was removed"))
+                        refreshKeywordRow()
+                    }
+                }
             HBox(keywordLabel, deleteButton)
                 .apply { spacing = 3.0 }
                 .apply { id = "keyword-$keyword" }
@@ -241,7 +246,6 @@ class JpgMetadataPanel @Inject constructor(
                     .apply { isDisable = true }
                     .also { customKeywordTextField.apply { textProperty().addListener { _, _, newValue -> it.isDisable = newValue.isBlank() } } }
                     .also { children.add(it) }
-
             }
     }
 

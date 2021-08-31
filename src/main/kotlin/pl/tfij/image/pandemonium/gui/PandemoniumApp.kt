@@ -50,5 +50,4 @@ class PandemoniumApp : Application() {
         root.bottom = statusBar
         return root
     }
-
 }

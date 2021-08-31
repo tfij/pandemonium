@@ -9,7 +9,6 @@ import java.time.Clock
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-
 class GuiceModule : AbstractModule() {
     override fun configure() {
         bind(ExecutorService::class.java).toInstance(Executors.newFixedThreadPool(10))

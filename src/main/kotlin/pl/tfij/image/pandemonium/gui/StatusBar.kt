@@ -19,9 +19,6 @@ class StatusBar @Inject constructor() : HBox() {
     fun push(message: Message) {
         messageText.text = message.text
     }
-
 }
 
 data class Message(val text: String)
-
-
