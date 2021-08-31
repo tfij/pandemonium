@@ -43,8 +43,12 @@ class InMemoryKeywordRepository : KeywordRepository {
     }
 }
 
-class PreferencesKeywordRepository(private val maxNumberOfStoredLastUsedKeywords: Int, private val clock: Clock) : KeywordRepository {
-    private val mainPreferences = Preferences.userNodeForPackage(KeywordRepository::class.java)
+class PreferencesKeywordRepository(
+    private val maxNumberOfStoredLastUsedKeywords: Int,
+    mainPreferences: Preferences,
+    private val clock: Clock
+) : KeywordRepository {
+
     private val lastUsedKeywordPreferences = mainPreferences.node("keywords").node("lastUsed")
     private val standardKeywordPreferences = mainPreferences.node("keywords").node("standard")
 
@@ -86,6 +90,7 @@ class PreferencesKeywordRepository(private val maxNumberOfStoredLastUsedKeywords
     private fun prepareSpaceForNewLastUsedKeywords() {
         lastUsedKeywordPreferences.keys()
             .sorted()
+            .reversed()
             .drop(maxNumberOfStoredLastUsedKeywords - 1)
             .forEach { key -> lastUsedKeywordPreferences.remove(key) }
     }
