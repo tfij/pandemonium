@@ -16,7 +16,8 @@ import pl.tfij.image.pandemonium.core.JpgMetadataService
 
 class StandardKeywordsConfigurationPanel @Inject constructor(private val jpgMetadataService: JpgMetadataService) : VBox() {
 
-    private val observableList = FXCollections.observableList(jpgMetadataService.standardKeywords().map { LabelAndButtonCell(it, handleAddKeywordAction()) })
+    private val observableList = FXCollections.observableList(jpgMetadataService.standardKeywords()
+        .map { LabelAndButtonCell(it, handleAddKeywordAction()) })
 
     private val keywordInputDialog = TextInputDialog()
         .apply { title = "New standard keyword" }
@@ -32,7 +33,7 @@ class StandardKeywordsConfigurationPanel @Inject constructor(private val jpgMeta
             keywordInputDialog.showAndWait().ifPresent { keywordToAdd ->
                 jpgMetadataService.addStandardKeyword(keywordToAdd)
                 observableList.add(LabelAndButtonCell(keywordToAdd, handleAddKeywordAction()))
-                observableList.sortBy { it.labelText.toLowerCase() }
+                observableList.sortBy { it.labelText.lowercase() }
             }
         }
     }
@@ -58,7 +59,7 @@ private class LabelAndButtonCell(val labelText: String, onAction: (keyword: Stri
         .apply { setOnAction { onAction(labelText) } }
 
     init {
-        setHgrow(label, Priority.ALWAYS);
+        setHgrow(label, Priority.ALWAYS)
         children.addAll(label, button)
     }
 }

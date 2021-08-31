@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.3.61"
+    id("org.jetbrains.kotlin.jvm") version "1.5.30"
     application
     groovy
     id("org.openjfx.javafxplugin") version "0.0.8"
@@ -19,10 +19,9 @@ javafx {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.apache.commons:commons-imaging:1.0-alpha1")
-    implementation("com.google.inject:guice:4.0")
+    implementation("com.google.inject:guice:5.0.1")
 
-    testCompile("org.codehaus.groovy:groovy-all:2.5.8")
-    testCompile("org.spockframework:spock-core:1.3-groovy-2.5")
+    testImplementation("org.spockframework:spock-core:2.0-groovy-3.0")
 }
 
 application {

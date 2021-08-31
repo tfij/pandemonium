@@ -11,6 +11,7 @@ import javafx.stage.Stage
 import pl.tfij.image.pandemonium.gui.imageselection.ImageSelectionPanel
 import pl.tfij.image.pandemonium.gui.infrastructure.GuiceModule
 import pl.tfij.image.pandemonium.gui.menu.AppMenuBar
+import java.util.concurrent.ExecutorService
 
 class PandemoniumApp : Application() {
 
@@ -26,6 +27,14 @@ class PandemoniumApp : Application() {
         stage.icons.add(Image("icons/camera64.png"))
         stage.scene = Scene(rootComponent(injector), 900.0, 700.0)
         stage.show()
+        stage.setOnCloseRequest {
+            cleanUp(injector)
+        }
+    }
+
+    private fun cleanUp(injector: Injector) {
+        val executorService = injector.getInstance(ExecutorService::class.java)
+        executorService.shutdown()
     }
 
     private fun rootComponent(injector: Injector): BorderPane {
