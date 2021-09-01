@@ -7,6 +7,7 @@ import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 import javafx.util.Callback
 import java.io.File
+import java.nio.file.Files
 
 class DirectoryTreeView(private val file: File) : TreeView<File>(
     DirectoryTreeItem(
@@ -62,6 +63,7 @@ private class DirectoryTreeItem(file: File) : TreeItem<File>(file) {
 
     private fun buildChildren(TreeItem: TreeItem<File>): ObservableList<TreeItem<File>> {
         return TreeItem.value.listFiles()
+            ?.filter { Files.isReadable(it.toPath()) }
             ?.filter { it.isDirectory }
             ?.sortedBy { it.name.lowercase() }
             ?.map { childFile ->
