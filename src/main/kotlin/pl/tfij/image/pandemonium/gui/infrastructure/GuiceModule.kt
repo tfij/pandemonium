@@ -4,8 +4,10 @@ import com.google.inject.AbstractModule
 import pl.tfij.image.pandemonium.core.JpgMetadataService
 import pl.tfij.image.pandemonium.core.KeywordRepository
 import pl.tfij.image.pandemonium.core.PreferencesKeywordRepository
-import pl.tfij.image.pandemonium.gui.ImageDetailsPanel
 import pl.tfij.image.pandemonium.gui.StatusBar
+import pl.tfij.image.pandemonium.gui.imagemetadata.ImageDetailsPanel
+import pl.tfij.image.pandemonium.gui.imagemetadata.MultiImageDetailsPanel
+import pl.tfij.image.pandemonium.gui.imagemetadata.SingleImageDetailsPanel
 import java.time.Clock
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -24,6 +26,8 @@ class GuiceModule : AbstractModule() {
             )
         )
         bind(StatusBar::class.java).asEagerSingleton()
+        bind(SingleImageDetailsPanel::class.java).asEagerSingleton()
+        bind(MultiImageDetailsPanel::class.java).asEagerSingleton()
         bind(ImageDetailsPanel::class.java).asEagerSingleton()
     }
 }

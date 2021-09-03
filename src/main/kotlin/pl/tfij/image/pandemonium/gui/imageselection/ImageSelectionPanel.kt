@@ -3,20 +3,20 @@ package pl.tfij.image.pandemonium.gui.imageselection
 import com.google.inject.Inject
 import javafx.application.Platform
 import javafx.collections.FXCollections
+import javafx.collections.ListChangeListener
 import javafx.scene.control.CheckBox
+import javafx.scene.control.SelectionMode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import pl.tfij.image.pandemonium.core.isJpg
-import pl.tfij.image.pandemonium.gui.ImageDetailsPanel
-import pl.tfij.image.pandemonium.gui.Message
-import pl.tfij.image.pandemonium.gui.StatusBar
+import pl.tfij.image.pandemonium.gui.imagemetadata.ImageDetailsPanel
 import java.io.File
 import java.nio.file.Files
 import java.util.concurrent.ExecutorService
 
 open class GenericImageSelectionPanel(
     executorService: ExecutorService,
-    private val onImageSelected: (File) -> Unit
+    private val onImageSelected: (List<File>) -> Unit
 ) : HBox() {
     private val initDirLocation = File(System.getProperty("user.home"))
 
@@ -59,11 +59,10 @@ open class GenericImageSelectionPanel(
 
     private val imageListView = ImageListView(100.0, executorService)
         .apply {
-            selectionModel.selectedItemProperty().addListener { _, _, newValue ->
-                if (newValue != null) {
-                    onImageSelected(newValue)
-                }
-            }
+            selectionModel.selectionMode = SelectionMode.MULTIPLE
+            selectionModel.selectedItems.addListener(
+                ListChangeListener { files -> onImageSelected(files?.list ?: emptyList()) }
+            )
         }
 
     init {
@@ -88,13 +87,9 @@ open class GenericImageSelectionPanel(
 }
 
 class ImageSelectionPanel @Inject constructor(
-    statusBar: StatusBar,
     imageDetailsPanel: ImageDetailsPanel,
     executorService: ExecutorService
 ) : GenericImageSelectionPanel(
     executorService = executorService,
-    onImageSelected = { file ->
-        statusBar.push(Message("Loaded ${file.name}"))
-        imageDetailsPanel.setFile(file)
-    }
+    onImageSelected = { files -> imageDetailsPanel.selectedImages(files) }
 )

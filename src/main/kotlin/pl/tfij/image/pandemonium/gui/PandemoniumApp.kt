@@ -8,6 +8,7 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.stage.Stage
+import pl.tfij.image.pandemonium.gui.imagemetadata.ImageDetailsPanel
 import pl.tfij.image.pandemonium.gui.imageselection.ImageSelectionPanel
 import pl.tfij.image.pandemonium.gui.infrastructure.GuiceModule
 import pl.tfij.image.pandemonium.gui.menu.AppMenuBar

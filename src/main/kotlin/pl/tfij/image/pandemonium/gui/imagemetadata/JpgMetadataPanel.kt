@@ -1,27 +1,23 @@
-package pl.tfij.image.pandemonium.gui
+package pl.tfij.image.pandemonium.gui.imagemetadata
 
 import com.google.inject.Inject
-import javafx.collections.FXCollections
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
-import javafx.scene.Scene
 import javafx.scene.control.Button
-import javafx.scene.control.ChoiceBox
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.HBox
-import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.scene.text.Text
 import javafx.stage.FileChooser
-import javafx.stage.Modality
-import javafx.stage.Stage
 import pl.tfij.image.pandemonium.core.JpgMetadata
 import pl.tfij.image.pandemonium.core.JpgMetadataService
+import pl.tfij.image.pandemonium.gui.Message
+import pl.tfij.image.pandemonium.gui.StatusBar
 
 class JpgMetadataPanel @Inject constructor(
     private val jpgMetadataService: JpgMetadataService,
@@ -182,71 +178,18 @@ class JpgMetadataPanel @Inject constructor(
             .apply { children.addAll(keywordsPanes) }
             .apply {
                 Button("Add", ImageView(Image("icons/plus16.png")))
-                    .apply {
-                        setOnAction {
-                            Stage()
-                                .apply { initModality(Modality.APPLICATION_MODAL) }
-                                .apply { initOwner(parent.scene.window as Stage) }
-                                .apply { title = "Insert a keyword" }
-                                .apply {
-                                    HBox()
-                                        .apply { spacing = 5.0 }
-                                        .apply { children.add(selectStandardKeywordPane()) }
-                                        .apply { children.add(selectLastUseKeywordPane()) }
-                                        .apply { children.add(customKeywordPane()) }
-                                        .apply { padding = Insets(5.0) }
-                                        .also { scene = Scene(it, 300.0, 200.0) }
-                                }
-                                .apply { show() }
-                        }
-                    }
+                    .apply { setOnAction { initKeywordModal() } }
                     .let { children.add(it) }
             }
     }
 
-    private fun selectStandardKeywordPane(): Pane {
-        val standardKeywordsChoiceBox = ChoiceBox(FXCollections.observableArrayList(jpgMetadataService.standardKeywords()))
-        return VBox()
-            .apply { spacing = 5.0 }
-            .apply { children.add(Text("Standard")) }
-            .apply { children.add(standardKeywordsChoiceBox) }
-            .apply {
-                Button("Add", ImageView(Image("icons/plus16.png")))
-                    .apply { isDisable = true }
-                    .apply { setOnAction { addKeyword(standardKeywordsChoiceBox.value) } }
-                    .also { button -> standardKeywordsChoiceBox.setOnAction { button.isDisable = standardKeywordsChoiceBox.value.isBlank() } }
-                    .also { children.add(it) }
-            }
-    }
-
-    private fun selectLastUseKeywordPane(): Pane {
-        val lastUsedKeywordsChoiceBox = ChoiceBox(FXCollections.observableArrayList(jpgMetadataService.lastUsedKeywords()))
-        return VBox()
-            .apply { spacing = 5.0 }
-            .apply { children.add(Text("Last used")) }
-            .apply { children.add(lastUsedKeywordsChoiceBox) }
-            .apply {
-                Button("Add", ImageView(Image("icons/plus16.png")))
-                    .apply { isDisable = true }
-                    .apply { setOnAction { addKeyword(lastUsedKeywordsChoiceBox.value) } }
-                    .also { button -> lastUsedKeywordsChoiceBox.setOnAction { button.isDisable = lastUsedKeywordsChoiceBox.value.isBlank() } }
-                    .also { children.add(it) }
-            }
-    }
-
-    private fun customKeywordPane(): Pane {
-        val customKeywordTextField = TextField()
-        return VBox()
-            .apply { spacing = 5.0 }
-            .apply { children.add(Text("Custom keyword")) }
-            .apply { children.add(customKeywordTextField) }
-            .apply {
-                Button("Add", ImageView(Image("icons/plus16.png")))
-                    .apply { setOnAction { addKeyword(customKeywordTextField.text) } }
-                    .apply { isDisable = true }
-                    .also { customKeywordTextField.apply { textProperty().addListener { _, _, newValue -> it.isDisable = newValue.isBlank() } } }
-                    .also { children.add(it) }
-            }
+    private fun initKeywordModal() {
+        AddKeywordModal(
+            parent = parent,
+            onKeywordAdd = { keyword -> addKeyword(keyword) },
+            lastUsedKeywordProvider = { jpgMetadataService.lastUsedKeywords() },
+            standardKeywordProvider = { jpgMetadataService.standardKeywords() }
+        ).apply { show() }
     }
 
     private fun addKeyword(keyWord: String) {
