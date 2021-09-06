@@ -56,10 +56,8 @@ publishing {
         }
     }
     publications {
-        register<MavenPublication>("app-zip") {
+        register<MavenPublication>("app-bin") {
             artifact(tasks.distZip)
-        }
-        register<MavenPublication>("app-tar") {
             artifact(tasks.distTar)
         }
     }
