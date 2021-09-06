@@ -56,8 +56,11 @@ publishing {
         }
     }
     publications {
-        register<MavenPublication>("gpr") {
-            from(components["java"])
+        register<MavenPublication>("app-zip") {
+            artifact(tasks.distZip)
+        }
+        register<MavenPublication>("app-tar") {
+            artifact(tasks.distTar)
         }
     }
 }
