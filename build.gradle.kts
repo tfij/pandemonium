@@ -2,7 +2,6 @@ plugins {
     kotlin("jvm") version "1.5.30"
     application
     groovy
-    `maven-publish`
     id("org.openjfx.javafxplugin") version "0.0.10"
     id("org.jlleitschuh.gradle.ktlint") version "10.1.0"
     id("pl.allegro.tech.build.axion-release") version "1.13.3"
@@ -42,23 +41,4 @@ tasks {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
-}
-
-publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/tfij/pandemonium")
-            credentials {
-                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
-            }
-        }
-    }
-    publications {
-        register<MavenPublication>("app-bin") {
-            artifact(tasks.distZip)
-            artifact(tasks.distTar)
-        }
-    }
 }
