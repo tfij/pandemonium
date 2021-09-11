@@ -4,14 +4,29 @@ Pandemonium is an application to menage JPG metadata stored in exif.
 Application enable easy way to edit photo title, comment and keywords.
 Additionally  provides to read information such as camera model, expose time, ISO, etc.
 
-## Installation
-Download tne selected version of application from [TODO](TODO).
+## Installation & Running
 
-### Linux
-extract `pandemonium.zip` file and run `./bin/pandemonium`
+### Download
+Download tne selected version of application
 
-### Windows
-extract `pandemonium.zip` file and run `./bin/pandemonium.bat`
+|                       |  Link                                                                                                       |
+| --------------------- |  ---------------------------------------------------------------------------------------------------------- |
+| Binary tar archive    | [pandemonium-1.0.0.tar](https://github.com/tfij/pandemonium/releases/download/v1.0.0/pandemonium-1.0.0.tar) |
+| Binary zip archive    | [pandemonium-1.0.0.zip](https://github.com/tfij/pandemonium/releases/download/v1.0.0/pandemonium-1.0.0.zip) |
+| Source code (tar.gz)  | [v1.0.0.tag.gz](https://github.com/tfij/pandemonium/archive/refs/tags/v1.0.0.tar.gz)                        |
+| Source code (zip)     | [v1.0.0.zip](https://github.com/tfij/pandemonium/archive/refs/tags/v1.0.0.zip)                              |
+
+### Requirements
+
+The application to run requires Java 8 or newer to be installed.
+
+### Run 
+
+#### Linux
+extract downloaded archive file and run `./bin/pandemonium` script
+
+#### Windows
+extract downloaded archive file and run `./bin/pandemonium.bat` script
 
 ## Usage
 TODO
