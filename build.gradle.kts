@@ -1,3 +1,15 @@
+import io.github.fvarrui.javapackager.gradle.PackageTask
+import io.github.fvarrui.javapackager.model.Platform
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("io.github.fvarrui:javapackager:1.6.0")
+    }
+}
+
 plugins {
     kotlin("jvm") version "1.5.30"
     application
@@ -6,9 +18,11 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "10.1.0"
     id("pl.allegro.tech.build.axion-release") version "1.13.3"
 }
+apply(plugin = "io.github.fvarrui.javapackager.plugin")
 
 group = "pl.tfij.image"
-version = scmVersion.version
+// version = scmVersion.version
+version = "1.0.1SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -32,13 +46,54 @@ application {
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "11"
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "11"
     }
 }
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+}
+
+tasks.register<PackageTask>("packageForLinux") {
+    group = "package"
+    dependsOn(tasks["build"])
+    mainClass = "pl.tfij.image.pandemonium.gui.Main"
+    isBundleJre = true
+    isAdministratorRequired = false
+    isGenerateInstaller = true
+    platform = Platform.linux
+    outputDirectory = File(project.buildDir, "binaries")
+}
+
+tasks.register<PackageTask>("packageForWindows") {
+    group = "package"
+    dependsOn(tasks["build"])
+    mainClass = "pl.tfij.image.pandemonium.gui.Main"
+    isCreateZipball = false
+    additionalModulePaths = listOf(file("src"))
+    isBundleJre = true
+    isAdministratorRequired = false
+    isGenerateInstaller = true
+    platform = Platform.windows
+    outputDirectory = File(project.buildDir, "binaries")
+}
+
+tasks.register<PackageTask>("packageForMac") {
+    group = "package"
+    dependsOn(tasks["build"])
+    mainClass = "pl.tfij.image.pandemonium.gui.Main"
+    isBundleJre = true
+    isAdministratorRequired = false
+    isGenerateInstaller = true
+    isCreateTarball = true
+    platform = Platform.mac
+    outputDirectory = File(project.buildDir, "binaries")
+}
+
+tasks.register("packageForAllPlatforms") {
+    group = "package"
+    dependsOn(tasks["packageForLinux"], tasks["packageForWindows"], tasks["packageForMac"])
 }
