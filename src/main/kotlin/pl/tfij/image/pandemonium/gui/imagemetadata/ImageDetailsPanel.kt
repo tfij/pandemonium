@@ -22,7 +22,10 @@ class ImageDetailsPanel @Inject constructor(
     }
 
     fun selectedImages(files: List<File>) {
-        if (files.size == 1) {
+        if (files.isEmpty()) {
+            singleImageDetailsPanel.isVisible = false
+            multiImageDetailsPanel.isVisible = false
+        } else if (files.size == 1) {
             statusBar.push(Message("Loaded ${files[0].name}"))
             singleImageDetailsPanel.setFile(files[0])
             singleImageDetailsPanel.isVisible = true
