@@ -8,10 +8,12 @@ import javafx.scene.control.CheckBox
 import javafx.scene.control.SelectionMode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
-import pl.tfij.image.pandemonium.core.isJpg
+import pl.tfij.image.pandemonium.core.ImageScannerBuilder
+import pl.tfij.image.pandemonium.core.ImageScannerBuilder.NoRecursionSetup
+import pl.tfij.image.pandemonium.core.ImageScannerBuilder.RecursionSetup
+import pl.tfij.image.pandemonium.core.ImageScannerBuilder.RegularRecursionSetup
 import pl.tfij.image.pandemonium.gui.imagemetadata.ImageDetailsPanel
 import java.io.File
-import java.nio.file.Files
 import java.util.concurrent.ExecutorService
 
 open class GenericImageSelectionPanel(
@@ -28,34 +30,6 @@ open class GenericImageSelectionPanel(
                 onDirectoryChanged(newValue?.value, scanRecursivelyCheckBox.isSelected)
             }
         }
-
-    private fun onDirectoryChanged(selectedDir: File?, scanRecursively: Boolean) {
-        Platform.runLater {
-            val allFiles = if (scanRecursively && selectedDir != null) {
-                subDirsRecurs(selectedDir, RECURSION_SCAN_DEEP)
-                    .take(MAX_NUMBER_OF_FILES_SCANED_ON_RECURSION_SCAN)
-            } else {
-                selectedDir?.listFiles()?.asSequence() ?: emptySequence<File>()
-            }
-            val files = allFiles
-                .filter { Files.isReadable(it.toPath()) }
-                .filter { it.isJpg() }
-                .sortedBy { it.name.lowercase() }
-                .toList()
-            imageListView.items = FXCollections.observableArrayList(files)
-        }
-    }
-
-    private fun subDirsRecurs(dir: File, deep: Int): Sequence<File> {
-        return if (dir.isDirectory && deep > 0) {
-            dir.listFiles()?.asSequence()
-                ?.filter { Files.isReadable(it.toPath()) }
-                ?.flatMap { subDirsRecurs(it, deep - 1) }
-                ?: emptySequence()
-        } else {
-            sequenceOf(dir)
-        }
-    }
 
     private val imageListView = ImageListView(100.0, executorService)
         .apply {
@@ -80,9 +54,31 @@ open class GenericImageSelectionPanel(
         children.add(imageListView)
     }
 
+    private fun onDirectoryChanged(selectedDir: File?, scanRecursively: Boolean) {
+        Platform.runLater {
+            val files = ImageScannerBuilder.baseDir(selectedDir)
+                .scanRecursively(recursionSetup(scanRecursively))
+                .toSequence()
+                .sortedBy { it.name.lowercase() }
+                .toList()
+            imageListView.items = FXCollections.observableArrayList(files)
+        }
+    }
+
+    private fun recursionSetup(scanRecursively: Boolean): RecursionSetup {
+        return if (scanRecursively) {
+            RegularRecursionSetup(
+                RECURSION_SCAN_DEEP,
+                MAX_NUMBER_OF_FILES_SCANED_ON_RECURSION_SCAN
+            )
+        } else {
+            NoRecursionSetup
+        }
+    }
+
     companion object {
-        private val RECURSION_SCAN_DEEP = 5 // TODO move deep of recursion to configuration
-        private val MAX_NUMBER_OF_FILES_SCANED_ON_RECURSION_SCAN = 2000 // TODO move to configuration
+        private const val RECURSION_SCAN_DEEP = 5 // TODO move deep of recursion to configuration
+        private const val MAX_NUMBER_OF_FILES_SCANED_ON_RECURSION_SCAN = 2000 // TODO move to configuration
     }
 }
 
