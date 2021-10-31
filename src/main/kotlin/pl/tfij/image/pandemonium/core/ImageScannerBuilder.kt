@@ -15,8 +15,8 @@ class ImageScannerBuilder(
 
     fun toSequence(): Sequence<File> {
         return allFileSequence()
-            .filter { Files.isReadable(it.toPath()) }
             .filter { it.isJpg() }
+            .filter { isReadable(it) }
     }
 
     fun toList(): List<File> {
@@ -41,15 +41,19 @@ class ImageScannerBuilder(
     }
 
     private fun subDirsRecurs(dir: File, deep: Int): Sequence<File> {
-        return if (dir.isDirectory && deep > 0) {
+        return if (dir.isDirectory && deep > 0 && isReadable(dir)) {
             dir.listFiles()?.asSequence()
-                ?.filter { Files.isReadable(it.toPath()) }
                 ?.flatMap { subDirsRecurs(it, deep - 1) }
                 ?: emptySequence()
         } else {
             sequenceOf(dir)
         }
     }
+
+    /**
+     * method is slow so should be executed as last in pipeline
+     */
+    private fun isReadable(dir: File) = Files.isReadable(dir.toPath())
 
     sealed interface RecursionSetup
 
