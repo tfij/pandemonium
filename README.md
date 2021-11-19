@@ -11,10 +11,10 @@ Download tne selected version of application
 
 |                       |  Link                                                                                                       |
 | --------------------- |  ---------------------------------------------------------------------------------------------------------- |
-| Binary tar archive    | [pandemonium-1.0.0.tar](https://github.com/tfij/pandemonium/releases/download/v1.0.0/pandemonium-1.0.0.tar) |
-| Binary zip archive    | [pandemonium-1.0.0.zip](https://github.com/tfij/pandemonium/releases/download/v1.0.0/pandemonium-1.0.0.zip) |
-| Source code (tar.gz)  | [v1.0.0.tag.gz](https://github.com/tfij/pandemonium/archive/refs/tags/v1.0.0.tar.gz)                        |
-| Source code (zip)     | [v1.0.0.zip](https://github.com/tfij/pandemonium/archive/refs/tags/v1.0.0.zip)                              |
+| Binary tar archive    | [pandemonium-1.0.1.tar](https://github.com/tfij/pandemonium/releases/download/v1.0.1/pandemonium-1.0.1.tar) |
+| Binary zip archive    | [pandemonium-1.0.1.zip](https://github.com/tfij/pandemonium/releases/download/v1.0.1/pandemonium-1.0.1.zip) |
+| Source code (tar.gz)  | [v1.0.1.tag.gz](https://github.com/tfij/pandemonium/archive/refs/tags/v1.0.1.tar.gz)                        |
+| Source code (zip)     | [v1.0.1.zip](https://github.com/tfij/pandemonium/archive/refs/tags/v1.0.1.zip)                              |
 
 ### Requirements
 
