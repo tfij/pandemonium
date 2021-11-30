@@ -9,6 +9,7 @@ import javafx.scene.control.ListView
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.util.Callback
+import mu.KotlinLogging
 import java.io.File
 import java.util.concurrent.ExecutorService
 
@@ -72,7 +73,14 @@ private class ImageListCell(
         task.setOnSucceeded {
             imageView.image = task.value
             imageView.maxWidth(imageSize)
+            if (imageView.image.isError) {
+                logger.error { "Error occur on loading ${item.absolutePath}. ${imageView.image.exception}" }
+            }
         }
         return task
+    }
+
+    companion object {
+        private val logger = KotlinLogging.logger {}
     }
 }

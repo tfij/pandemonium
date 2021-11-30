@@ -22,6 +22,8 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.apache.commons:commons-imaging:1.0-alpha2")
     implementation("com.google.inject:guice:5.0.1")
+    implementation("io.github.microutils:kotlin-logging-jvm:2.1.0")
+    implementation("ch.qos.logback:logback-classic:1.2.7")
 
     testImplementation("org.spockframework:spock-core:2.0-groovy-3.0")
 }
