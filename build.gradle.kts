@@ -15,7 +15,8 @@ repositories {
 }
 
 javafx {
-    modules("javafx.controls")
+    version = "11"
+    modules = listOf("javafx.controls", "javafx.graphics")
 }
 
 dependencies {
@@ -32,10 +33,10 @@ application {
 
 tasks {
     compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "11"
     }
     compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.jvmTarget = "11"
     }
 }
 
