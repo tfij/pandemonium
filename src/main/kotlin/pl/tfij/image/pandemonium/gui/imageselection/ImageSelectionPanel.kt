@@ -12,19 +12,19 @@ import pl.tfij.image.pandemonium.core.ImageScannerBuilder
 import pl.tfij.image.pandemonium.core.ImageScannerBuilder.NoRecursionSetup
 import pl.tfij.image.pandemonium.core.ImageScannerBuilder.RecursionSetup
 import pl.tfij.image.pandemonium.core.ImageScannerBuilder.RegularRecursionSetup
+import pl.tfij.image.pandemonium.core.InitDirectoryRepository
 import pl.tfij.image.pandemonium.gui.imagemetadata.ImageDetailsPanel
 import java.io.File
 import java.util.concurrent.ExecutorService
 
 open class GenericImageSelectionPanel(
     executorService: ExecutorService,
-    private val onImageSelected: (List<File>) -> Unit
+    private val onImageSelected: (List<File>) -> Unit,
+    initDirectoryRepository: InitDirectoryRepository,
 ) : HBox() {
-    private val initDirLocation = File(System.getProperty("user.home"))
-
     private val scanRecursivelyCheckBox = CheckBox("Scan recursively (deep = $RECURSION_SCAN_DEEP, files limit = $MAX_NUMBER_OF_FILES_SCANED_ON_RECURSION_SCAN)")
 
-    private val directoryTreeView = DirectoryTreeView(initDirLocation)
+    private val directoryTreeView = DirectoryTreeView(File(initDirectoryRepository.getInitDirectory()))
         .apply {
             selectionModel.selectedItemProperty().addListener { _, _, newValue ->
                 onDirectoryChanged(newValue?.value, scanRecursivelyCheckBox.isSelected)
@@ -84,8 +84,10 @@ open class GenericImageSelectionPanel(
 
 class ImageSelectionPanel @Inject constructor(
     imageDetailsPanel: ImageDetailsPanel,
-    executorService: ExecutorService
+    executorService: ExecutorService,
+    initDirectoryRepository: InitDirectoryRepository
 ) : GenericImageSelectionPanel(
     executorService = executorService,
-    onImageSelected = { files -> imageDetailsPanel.selectedImages(files) }
+    onImageSelected = { files -> imageDetailsPanel.selectedImages(files) },
+    initDirectoryRepository = initDirectoryRepository
 )

@@ -56,7 +56,7 @@ private class DirectoryTreeItem(file: File) : TreeItem<File>(file) {
     override fun isLeaf(): Boolean {
         if (isFirstTimeLeaf) {
             isFirstTimeLeaf = false
-            isLeaf = value?.listFiles()?.filter { it.isDirectory }?.isEmpty() ?: true
+            isLeaf = value?.listFiles()?.none { it.isDirectory } ?: true
         }
         return isLeaf
     }
