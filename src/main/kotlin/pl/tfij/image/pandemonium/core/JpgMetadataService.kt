@@ -17,6 +17,7 @@ import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.EXIF_T
 import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants.EXIF_TAG_SOFTWARE
 import org.apache.commons.imaging.formats.tiff.constants.TiffDirectoryType
 import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoAscii
+import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoShort
 import org.apache.commons.imaging.formats.tiff.taginfos.TagInfoXpString
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet
@@ -40,16 +41,34 @@ class JpgMetadataService(private val keywordRepository: KeywordRepository) {
             title = metadata.exif?.findField(EXIF_TAG_XP_TITLE)?.stringValue ?: "",
             keywords = metadata.exif?.findField(EXIF_TAG_XP_KEYWORDS)?.stringValue?.split(";") ?: emptyList(),
             comment = metadata.exif?.findField(EXIF_TAG_XP_COMMENT)?.stringValue ?: "",
+            rating = PhotoRating.valueOf(metadata.exif?.findField(EXIF_TAG_RATING)?.intValue?.toShort()),
             cameraModel = metadata.exif?.findField(EXIF_TAG_MODEL)?.stringValue ?: "",
             software = metadata.exif?.findField(EXIF_TAG_SOFTWARE)?.stringValue ?: "",
             fNumber = (metadata.exif?.findField(EXIF_TAG_FNUMBER)?.value as RationalNumber?)?.let { FNumber(it.numerator, it.divisor) },
             exposureTime = (metadata.exif?.findField(EXIF_TAG_EXPOSURE_TIME)?.value as RationalNumber?)?.let { ExposureTime(it.numerator, it.divisor) },
             iso = metadata.exif?.findField(EXIF_TAG_ISO)?.intValue,
-            dataTimeOriginal = metadata.exif?.findField(EXIF_TAG_DATE_TIME_ORIGINAL)?.stringValue,
+            dataTimeOriginal = extractDateTimeOriginal(metadata),
             flash = metadata.exif?.findField(EXIF_TAG_FLASH)?.intValue,
             focusLength = (metadata.exif?.findField(EXIF_TAG_FOCAL_LENGTH)?.value as RationalNumber?)?.toInt(),
             focusLengthIn35mmFormat = metadata.exif?.findField(EXIF_TAG_FOCAL_LENGTH_IN_35MM_FORMAT)?.intValue
         )
+    }
+
+    private fun extractDateTimeOriginal(metadata: JpegImageMetadata): String? {
+        val field = metadata.exif?.findField(EXIF_TAG_DATE_TIME_ORIGINAL)
+        val value = field?.value
+        return if (value is String) {
+            field.stringValue
+        } else if (value is Array<*> && value.size > 0) {
+            val firstValue = value[0]
+            if (firstValue is String) {
+                return firstValue
+            } else {
+                return null
+            }
+        } else {
+            null
+        }
     }
 
     private fun getImageInfo(file: File): ImageInfo {
@@ -89,12 +108,20 @@ class JpgMetadataService(private val keywordRepository: KeywordRepository) {
         exifDirectory.setTag(EXIF_TAG_XP_TITLE, jpgMetadata.title)
         exifDirectory.setTag(EXIF_TAG_XP_KEYWORDS, jpgMetadata.keywords.joinToString(";"))
         exifDirectory.setTag(EXIF_TAG_XP_COMMENT, jpgMetadata.comment)
+        exifDirectory.setTag(EXIF_TAG_RATING, jpgMetadata.rating?.value)
         ExifRewriter().updateExifMetadataLossless(jpgMetadata.file, os, outputSet)
     }
 
     private fun TiffOutputDirectory.setTag(tagInfo: TagInfoXpString, value: String) {
         this.removeField(tagInfo) // remove old value
         this.add(tagInfo, value)
+    }
+
+    private fun TiffOutputDirectory.setTag(tagInfo: TagInfoShort, value: Short?) {
+        this.removeField(tagInfo) // remove old value
+        if (value != null) {
+            this.add(tagInfo, value.toShort())
+        }
     }
 
     fun standardKeywords(): List<String> {
@@ -122,5 +149,6 @@ class JpgMetadataService(private val keywordRepository: KeywordRepository) {
         private val EXIF_TAG_XP_TITLE = TagInfoXpString("XPTitle", 0x9c9b, TiffDirectoryType.TIFF_DIRECTORY_IFD0)
         private val EXIF_TAG_XP_KEYWORDS = TagInfoXpString("XPKeywords", 0x9c9e, TiffDirectoryType.TIFF_DIRECTORY_IFD0)
         private val EXIF_TAG_XP_COMMENT = TagInfoXpString("XPComment", 0x9c9c, TiffDirectoryType.TIFF_DIRECTORY_IFD0)
+        private val EXIF_TAG_RATING = TagInfoShort("Rating", 0x4746, TiffDirectoryType.TIFF_DIRECTORY_IFD0)
     }
 }
