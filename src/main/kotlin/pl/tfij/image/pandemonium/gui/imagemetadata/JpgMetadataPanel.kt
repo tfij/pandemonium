@@ -5,6 +5,7 @@ import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Button
+import javafx.scene.control.ComboBox
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.image.Image
@@ -16,6 +17,7 @@ import javafx.scene.text.Text
 import javafx.stage.FileChooser
 import pl.tfij.image.pandemonium.core.JpgMetadata
 import pl.tfij.image.pandemonium.core.JpgMetadataService
+import pl.tfij.image.pandemonium.core.PhotoRating
 import pl.tfij.image.pandemonium.gui.Message
 import pl.tfij.image.pandemonium.gui.StatusBar
 
@@ -42,6 +44,20 @@ class JpgMetadataPanel @Inject constructor(
     private val commentValue = TextField()
         .apply { padding = Insets(1.0, 0.0, 1.0, 0.0) }
         .apply { textProperty().addListener { _, _, newComment -> image = image?.setComment(newComment) } }
+    private val ratingLabel = buildLabel("Rating")
+    private val ratingValue = ComboBox<Short?>()
+        .apply {
+            this.items.add(null)
+            PhotoRating.values().forEach {
+                this.items.add(it.value)
+            }
+        }
+        .apply {
+            this.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
+                val photoRating = PhotoRating.valueOf(newValue)
+                image = image?.setRating(photoRating)
+            }
+        }
     private val sizeLabel = buildLabel("Size")
     private val sizeValue = buildSimpleTextValue()
     private val cameraModelLabel = buildLabel("Camera model")
@@ -69,16 +85,17 @@ class JpgMetadataPanel @Inject constructor(
         insertRow(3, titleLabel, titleValue)
         insertRow(4, keywordsLabel, keywordsPane)
         insertRow(5, commentLabel, commentValue)
-        insertRow(6, sizeLabel, sizeValue)
-        insertRow(7, cameraModelLabel, cameraModelValue)
-        insertRow(8, softwareLabel, softwareValue)
-        insertRow(9, fNumberLabel, fNumberValue)
-        insertRow(10, exposureLabel, exposureValue)
-        insertRow(11, isoLabel, isoValue)
-        insertRow(12, focusLengthLabel, focusLengthValue)
-        insertRow(13, focusLengthIn35mmLabel, focusLengthIn35mmValue)
-        insertRow(14, flashLabel, flashValue)
-        addActionRow(15)
+        insertRow(6, ratingLabel, ratingValue)
+        insertRow(7, sizeLabel, sizeValue)
+        insertRow(8, cameraModelLabel, cameraModelValue)
+        insertRow(9, softwareLabel, softwareValue)
+        insertRow(10, fNumberLabel, fNumberValue)
+        insertRow(11, exposureLabel, exposureValue)
+        insertRow(12, isoLabel, isoValue)
+        insertRow(13, focusLengthLabel, focusLengthValue)
+        insertRow(14, focusLengthIn35mmLabel, focusLengthIn35mmValue)
+        insertRow(15, flashLabel, flashValue)
+        addActionRow(16)
     }
 
     private fun buildLabel(text: String): Text {
@@ -102,6 +119,7 @@ class JpgMetadataPanel @Inject constructor(
         titleValue.text = jpgMetadata.title
         refreshKeywordRow()
         commentValue.text = jpgMetadata.comment
+        ratingValue.value = jpgMetadata.rating?.value
         sizeValue.text = "${jpgMetadata.size.mb(2).toPlainString()}  mb"
         cameraModelValue.text = jpgMetadata.cameraModel
         softwareValue.text = jpgMetadata.software

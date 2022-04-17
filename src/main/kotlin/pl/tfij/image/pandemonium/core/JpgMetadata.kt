@@ -20,7 +20,8 @@ data class JpgMetadata(
     val focusLengthIn35mmFormat: Int?,
     val title: String,
     val keywords: List<String>,
-    val comment: String
+    val comment: String,
+    val rating: PhotoRating?
 ) {
     fun setTitle(title: String): JpgMetadata = copy(title = title)
 
@@ -31,6 +32,8 @@ data class JpgMetadata(
     fun removeKeyword(keyword: String): JpgMetadata = setKeywords(keywords.minus(keyword))
 
     fun setComment(comment: String): JpgMetadata = copy(comment = comment)
+
+    fun setRating(rating: PhotoRating?): JpgMetadata = copy(rating = rating)
 }
 
 data class Size(val bytes: Long) {
@@ -64,5 +67,19 @@ data class ExposureTime(private val numerator: Int, private val divisor: Int) {
 data class FNumber(private val numerator: Int, private val divisor: Int) {
     fun toText(): String {
         return BigDecimal(numerator).divide(BigDecimal(divisor), 1, RoundingMode.HALF_EVEN).stripTrailingZeros().toPlainString()
+    }
+}
+
+enum class PhotoRating(val value: Short) {
+    _1(1),
+    _2(2),
+    _3(3),
+    _4(4),
+    _5(5);
+
+    companion object {
+        fun valueOf(int: Short?): PhotoRating? {
+            return values().find { it.value == int }
+        }
     }
 }

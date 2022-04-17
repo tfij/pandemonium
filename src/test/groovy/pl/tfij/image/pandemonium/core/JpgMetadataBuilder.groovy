@@ -34,7 +34,8 @@ class JpgMetadataBuilder {
                 50,
                 "Lorem ipsum",
                 keywords,
-                "dolores"
+                "dolores",
+                PhotoRating._3
         )
     }
 
